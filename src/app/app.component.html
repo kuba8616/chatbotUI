@@ -1,6 +1,59 @@
-<mat-toolbar color="primary">
-  <span>Moja Aplikacja Angular</span>
-</mat-toolbar>
-<div style="text-align: center; margin-top: 20px;">
-  <button mat-raised-button color="accent">Kliknij mnie!</button>
+<div class="chat-container mat-elevation-z4">
+  <div class="chat-history">
+    <div *ngFor="let msg of chatHistory(); trackBy: trackById" class="chat-message">
+      <div class="message user">
+        <p class="message-content">{{ msg.message }}</p>
+      </div>
+      <div class="message bot">
+        <p class="message-content response"><strong>Odpowiedź:</strong> {{ msg.response }}</p>
+        <p *ngIf="msg.isCancelled" class="cancelled-note">Generowanie odpowiedzi zostało anulowane.</p>
+        <div class="rating-buttons">
+          <button
+            mat-icon-button
+            (click)="rateResponse(msg.id, Rating.Like)"
+            [color]="msg.rating === Rating.Like ? 'primary' : ''"
+          >
+            👍
+          </button>
+          <button
+            mat-icon-button
+            (click)="rateResponse(msg.id, Rating.Dislike)"
+            [color]="msg.rating === Rating.Dislike ? 'warn' : ''"
+          >
+            👎
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="message-input">
+    <mat-form-field class="full-width">
+      <input
+        matInput
+        [(ngModel)]="newMessageValue"
+        placeholder="Wpisz wiadomość..."
+        (keyup.enter)="sendMessage()"
+      />
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="sendMessage()"
+      [disabled]="isGeneratingResponse()"
+    >
+      Wyślij
+    </button>
+    <button
+      *ngIf="isGeneratingResponse()"
+      mat-raised-button
+      color="warn"
+      (click)="cancelResponse()"
+    >
+      ⏹ Anuluj
+    </button>
+  </div>
 </div>
